@@ -1,0 +1,54 @@
+.App__header > h1 {
+  font-weight: 300;
+  font-size: 2em;
+  color: #222;
+}
+
+.link-button {
+  border: 0;
+  background: 0;
+  color: #1c5065;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+.link-button:focus {
+  outline: 0;
+  text-decoration: underline;
+}
+
+.Choice {
+  padding: 1em 0.5em;
+  border: 2px solid transparent;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  text-transform: capitalize;
+  text-align: left;
+  line-height: 1.5em;
+  cursor: pointer;
+}
+.Choice:hover {
+  background-color: #efefef;
+}
+.Choice:focus {
+  outline: 0;
+  border: 2px solid #1c5065;
+}
+.Choice>svg {
+  flex: 0 0 auto;
+}
+
+main>nav>button {
+  margin-right: 1em;
+  display: inline-flex;
+  align-items: center;
+}
+main>nav>button>svg {
+  margin-right: 0.3em;
+}

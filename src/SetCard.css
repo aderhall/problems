@@ -1,0 +1,111 @@
+.SetCard {
+  margin-top: 1em;
+  /*background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 1px 4px 10px #bbb;*/
+}
+
+.SetCard__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 2em;
+}
+.SetCard h2 {
+  text-transform: capitalize;
+  font-family: inherit;
+  font-weight: 300;
+  font-size: 20px;
+  color: #666;
+  margin: 0;
+}
+
+.SetCard hr {
+  color: #666;
+}
+
+.SetCard__list {
+  padding-left: 1.5em;
+}
+
+.SetCard__list>li {
+  line-height: 2em;
+  margin-top: 1.5em;
+  font-size: 1.15em;
+  font-weight: 400;
+}
+.SetItem p {
+  margin: 0.5em 0;
+}
+
+.SetItem__answer-section {
+  display: none;
+  border-left: 2px solid #0d670d;
+  padding-left: 1em;
+  color: #222;
+}
+.SetItem__answer-section.open {
+  display: block;
+}
+
+.SetItem__explanation {
+  display: none;
+}
+.SetItem__explanation.open {
+  display: block;
+}
+
+.DotsMenu {
+  position: relative;
+}
+
+.DotsMenu__button {
+  height: 24px;
+  width: 24px;
+  border: 0;
+  border-radius: 50%;
+  padding: 7px;
+  box-sizing: content-box;
+  background-color: transparent;
+}
+.DotsMenu:focus-within > .DotsMenu__button {
+  outline: 0;
+  background-color: #efefef;
+}
+
+
+.DotsMenu__popup {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 0;
+  list-style: none;
+  width: 15em;
+}
+.DotsMenu__popup.open {
+  display: block;
+}
+
+.DotsMenu__popup > li > button {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1em;
+  border: 1px solid transparent;
+  background-color: white;
+  font-size: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.DotsMenu__popup > li > button:hover {
+  background-color: #efefef;
+}
+.DotsMenu__popup > li > button:focus {
+  outline: 0;
+  border: 1px dashed #1c5065;
+}
