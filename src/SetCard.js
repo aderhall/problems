@@ -64,8 +64,8 @@ function SetCard({route, newSet, goto}) {
         <DotsMenu items={[
           ["Export worksheet", () => goto([name, problemList, idList, 1])],
           ["Export answer sheet", () => goto([name, problemList, idList, 2])],
-          ["Reload all problems", () => newSet(name)],
-          ["I'm bored", () => console.log("d t")]
+          ["Export answers and explanations", () => goto([name, problemList, idList, 3])],
+          ["Reload all problems", () => newSet(name)]
         ]}/>
       </div>
       <hr />
@@ -79,13 +79,13 @@ function SetCard({route, newSet, goto}) {
   );
 }
 
-function Sheet({route}) {
+function Sheet({route, printPage}) {
   const [name, problemList, idList, mode] = route;
   return (
     <div className="SetCard">
       <div className="SetCard__header">
         <h2>{name}</h2>
-        <button className="link-button">Print</button>
+        <button className="link-button no-print" onClick={() => printPage()}>Print</button>
       </div>
       <hr />
       <ol className="SetCard__list">
@@ -109,7 +109,7 @@ function Sheet({route}) {
             default:
               break;
           }
-          return <li key={data}>
+          return <li key={JSON.stringify(problemData)}>
             <LineBreakP>{data}</LineBreakP>
           </li>
         })}

@@ -36,7 +36,7 @@ let problems = {
     },
     format({q, a}) {
       return {
-        question: `${q[0]}x = ${q[1]}`,
+        question: `${q[0]}x = ${q[1]}\nSolve for x`,
         answer: `x = ${a}`
       }
     }

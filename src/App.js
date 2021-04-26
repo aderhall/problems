@@ -59,8 +59,10 @@ function App() {
     const [name, problemList, idList, mode] = route;
     if (name !== null) {
       window.history.pushState(route, "", `/${BASE_PATH}/${mode}/${encodeURIComponent(name)}/${encodeObj([problemList, idList])}`);
+      document.title = `${name}${mode === 0 ? "" : ` (${mode === 1 ? "worksheet" : "answers"})`} | Adrian's endless source of problems`;
     } else {
       window.history.pushState(null, "", `/${BASE_PATH}`);
+      document.title = "Adrian's endless source of problems";
     }
     setRoute(route)
   }
@@ -77,23 +79,34 @@ function App() {
     goto([name, problemList, idList, 0]);
   }
   
+  const [printMode, setPrintMode] = useState(false);
+  const printPage = () => {
+    setPrintMode(true);
+  }
+  useEffect(() => {
+    if (printMode) {
+      window.print();
+      setPrintMode(false);
+    }
+  }, [printMode]);
+  
   return (
-    <div className="App">
-      <header className="App__header">
+    <div className={"App" + (printMode ? " print" : "")}>
+      <header className="App__header no-print">
         <h1>Adrian's endless source of problems</h1>
       </header>
       <main>
         {route[0] === null ? 
           <Chooser newSet={newSet} /> : 
           <>
-            <nav>
+            <nav className="no-print">
               <button className="link-button" onClick={() => window.history.back()}>
                 <svg width="15px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
                 </svg>
                 Back
               </button>
-              <button className="link-button" onClick={() => goto(null)}>
+              <button className="link-button" onClick={() => goto([null])}>
                 <svg width="15px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
                 </svg>
@@ -102,7 +115,7 @@ function App() {
             </nav>
             {route[3] === 0 ? 
               <SetCard route={route} newSet={newSet} goto={goto} /> :
-              <Sheet route={route} />
+              <Sheet route={route} printPage={printPage} />
             }
           </>
         }
@@ -121,5 +134,5 @@ export default App;
   * Help page documentation
   * √ Generate problems in app, not setcard
   * √ Menu option to reload each problem
-  * Menu options to generate question and answer sheets
+  * √ Menu options to generate question and answer sheets
 */

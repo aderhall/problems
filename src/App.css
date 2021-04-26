@@ -52,3 +52,7 @@ main>nav>button {
 main>nav>button>svg {
   margin-right: 0.3em;
 }
+
+.print .no-print {
+  display: none;
+}

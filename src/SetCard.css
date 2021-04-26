@@ -94,13 +94,14 @@
 .DotsMenu__popup > li > button {
   width: 100%;
   box-sizing: border-box;
-  padding: 1em;
+  padding: 0.8em 1em;
   border: 1px solid transparent;
   background-color: white;
   font-size: inherit;
   font-family: inherit;
   text-align: left;
   cursor: pointer;
+  line-height: 1.5em;
 }
 .DotsMenu__popup > li > button:hover {
   background-color: #efefef;
