@@ -3,7 +3,9 @@ import './App.css';
 import {SetCard, Sheet} from "./SetCard";
 import {cleanHistory, collections, newProblemData} from "./problems";
 
-const BASE_PATH = "problems";
+const BASE_PATH = "/problems";
+// The +2 refers to the "http(s)://" and "subdomain.domain.com" sections
+const NUM_SECTIONS = BASE_PATH.split("/").filter(x => x !== "").length + 2;
 
 function Choice({name, onClick}) {
   return (
@@ -34,7 +36,7 @@ function decodeObj(str) {
 }
 function getRouteFromUrl() {
   let path = window.location.href.split("/").filter(x => x !== "");
-  if (path.length <= 4) {
+  if (path.length <= NUM_SECTIONS + 1) {
     return [null];
   }
   let mode = parseInt(path[path.length - 3]);
@@ -58,10 +60,10 @@ function App() {
   const goto = route => {
     const [name, problemList, idList, mode] = route;
     if (name !== null) {
-      window.history.pushState(route, "", `/${BASE_PATH}/${mode}/${encodeURIComponent(name)}/${encodeObj([problemList, idList])}`);
+      window.history.pushState(route, "", `${BASE_PATH}/${mode}/${encodeURIComponent(name)}/${encodeObj([problemList, idList])}`);
       document.title = `${name}${mode === 0 ? "" : ` (${mode === 1 ? "worksheet" : "answers"})`} | Adrian's endless source of problems`;
     } else {
-      window.history.pushState(null, "", `/${BASE_PATH}`);
+      window.history.pushState(null, "", `${BASE_PATH}`);
       document.title = "Adrian's endless source of problems";
     }
     setRoute(route)
@@ -135,4 +137,5 @@ export default App;
   * √ Generate problems in app, not setcard
   * √ Menu option to reload each problem
   * √ Menu options to generate question and answer sheets
+  * PDF download
 */
