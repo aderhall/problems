@@ -4,8 +4,6 @@ import {SetCard, Sheet} from "./SetCard";
 import {cleanHistory, collections, newProblemData} from "./problems";
 
 const BASE_PATH = "/problems";
-// The +2 refers to the "http(s)://" and "subdomain.domain.com" sections
-const NUM_SECTIONS = BASE_PATH.split("/").filter(x => x !== "").length + 2;
 
 function Choice({name, onClick}) {
   return (
@@ -35,14 +33,11 @@ function decodeObj(str) {
   return JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(str)))));
 }
 function getRouteFromUrl() {
-  let path = window.location.href.split("/").filter(x => x !== "");
-  if (path.length <= NUM_SECTIONS + 1) {
+  let path = window.location.href.split("#").filter(x => x !== "");
+  if (path.length === 1) {
     return [null];
   }
-  let mode = parseInt(path[path.length - 3]);
-  let name = decodeURIComponent(path[path.length-2]);
-  let [problemList, idList] = decodeObj(path[path.length-1]);
-  return [name, problemList, idList, mode];
+  return decodeObj(path[1])
 }
 
 function App() {
@@ -58,9 +53,10 @@ function App() {
   });
   cleanHistory();
   const goto = route => {
-    const [name, problemList, idList, mode] = route;
+    // eslint-disable-next-line no-unused-vars
+    const [name, _problemList, _idList, mode] = route;
     if (name !== null) {
-      window.history.pushState(route, "", `${BASE_PATH}/${mode}/${encodeURIComponent(name)}/${encodeObj([problemList, idList])}`);
+      window.history.pushState(route, "", `${BASE_PATH}#${encodeObj(route)}`);
       document.title = `${name}${mode === 0 ? "" : ` (${mode === 1 ? "worksheet" : "answers"})`} | Adrian's endless source of problems`;
     } else {
       window.history.pushState(null, "", `${BASE_PATH}`);
@@ -137,5 +133,6 @@ export default App;
   * √ Generate problems in app, not setcard
   * √ Menu option to reload each problem
   * √ Menu options to generate question and answer sheets
+  * √ Deploy to gh-pages
   * PDF download
 */
