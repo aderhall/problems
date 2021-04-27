@@ -68,6 +68,7 @@
   padding: 7px;
   box-sizing: content-box;
   background-color: transparent;
+  cursor: pointer;
 }
 .DotsMenu:focus-within > .DotsMenu__button {
   outline: 0;
