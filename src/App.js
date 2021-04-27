@@ -32,12 +32,34 @@ function encodeObj(obj) {
 function decodeObj(str) {
   return JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(str)))));
 }
+// URL Format:
+// home: `https://aderhall.github.io/${BASE_PATH}
+// specific questions: `https://aderhall.github.io/${BASE_PATH}#!${name}/${data}`
 function getRouteFromUrl() {
-  let path = window.location.href.split("#").filter(x => x !== "");
+  let path = window.location.href.split("#!").filter(x => x !== "");
   if (path.length === 1) {
     return [null];
   }
-  return decodeObj(path[1])
+  let fragments = path[1].split("/");
+  try {
+    let name = decodeURIComponent(fragments[0]);
+    let [problemList, idList, mode] = decodeObj(fragments[1]);
+    return [name, problemList, idList, mode];
+  } catch {
+    console.error("Couldn't resolve url data fragment, redirecting to home.");
+    navigateToRoute([null]);
+    return [null];
+  }
+}
+function navigateToRoute(route) {
+  const [name, problemList, idList, mode] = route;
+  if (name !== null) {
+    window.history.pushState(route, "", `${BASE_PATH}#!${name}/${encodeObj([problemList, idList, mode])}`);
+    document.title = `${name}${mode === 0 ? "" : ` (${mode === 1 ? "worksheet" : "answers"})`} | Adrian's endless source of problems`;
+  } else {
+    window.history.pushState(null, "", `${BASE_PATH}`);
+    document.title = "Adrian's endless source of problems";
+  }
 }
 
 function App() {
@@ -53,16 +75,8 @@ function App() {
   });
   cleanHistory();
   const goto = route => {
-    // eslint-disable-next-line no-unused-vars
-    const [name, _problemList, _idList, mode] = route;
-    if (name !== null) {
-      window.history.pushState(route, "", `${BASE_PATH}#${encodeObj(route)}`);
-      document.title = `${name}${mode === 0 ? "" : ` (${mode === 1 ? "worksheet" : "answers"})`} | Adrian's endless source of problems`;
-    } else {
-      window.history.pushState(null, "", `${BASE_PATH}`);
-      document.title = "Adrian's endless source of problems";
-    }
-    setRoute(route)
+    navigateToRoute(route);
+    setRoute(route);
   }
   const newSet = name => {
     let problemList = [];
