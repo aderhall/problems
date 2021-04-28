@@ -1,15 +1,18 @@
 import React, {useEffect, useState} from "react";
 import './App.css';
 import {SetCard, Sheet} from "./SetCard";
-import {cleanHistory, collections, newProblemData} from "./problems";
+import {cleanHistory, collections, random} from "./problems";
 
 const BASE_PATH = "/problems";
+
+//random.initialize(10);
+//for (let i = 0; i < 5; i++) console.log(random.random());
 
 function Choice({name, onClick}) {
   return (
     <button className="Choice" onClick={onClick}>
       <span>{name}</span>
-      <svg width="24px" xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg width="24px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
       </svg>
     </button>
@@ -26,11 +29,12 @@ function Chooser({newSet}) {
   );
 }
 
-function encodeObj(obj) {
-  return encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(obj)))));
+function encodeData(seed, mode) {
+  // Converts to a base-36 string
+  return mode.toString() + seed.toString(36);
 }
-function decodeObj(str) {
-  return JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(str)))));
+function decodeData(str) {
+  return [parseInt(str.slice(1), 36), parseInt(str[0])];
 }
 // URL Format:
 // home: `https://aderhall.github.io/${BASE_PATH}
@@ -43,8 +47,8 @@ function getRouteFromUrl() {
   let fragments = path[1].split("/");
   try {
     let name = decodeURIComponent(fragments[0]);
-    let [problemList, idList, mode] = decodeObj(fragments[1]);
-    return [name, problemList, idList, mode];
+    let [seed, mode] = decodeData(fragments[1]);
+    return [name, seed, mode];
   } catch {
     console.error("Couldn't resolve url data fragment, redirecting to home.");
     navigateToRoute([null]);
@@ -52,9 +56,10 @@ function getRouteFromUrl() {
   }
 }
 function navigateToRoute(route) {
-  const [name, problemList, idList, mode] = route;
+  // eslint-disable-next-line no-unused-vars
+  const [name, seed, mode] = route;
   if (name !== null) {
-    window.history.pushState(route, "", `${BASE_PATH}#!${name}/${encodeObj([problemList, idList, mode])}`);
+    window.history.pushState(route, "", `${BASE_PATH}#!${name}/${encodeData(seed, mode)}`);
     document.title = `${name}${mode === 0 ? "" : ` (${mode === 1 ? "worksheet" : "answers"})`} | Adrian's endless source of problems`;
   } else {
     window.history.pushState(null, "", `${BASE_PATH}`);
@@ -79,16 +84,8 @@ function App() {
     setRoute(route);
   }
   const newSet = name => {
-    let problemList = [];
-    let idList = [];
-    let id;
-    for (let i = 0; i < 5; i++) {
-      // Random problem id from the collection topics list
-      id = collections[name][Math.floor(Math.random() * collections[name].length)];
-      problemList.push(newProblemData(id));
-      idList.push(id);
-    }
-    goto([name, problemList, idList, 0]);
+    let seed = random.newRandomSeed();
+    goto([name, seed, 0]);
   }
   
   const [printMode, setPrintMode] = useState(false);
@@ -101,7 +98,6 @@ function App() {
       setPrintMode(false);
     }
   }, [printMode]);
-  
   return (
     <div className={"App" + (printMode ? " print" : "")}>
       <header className="App__header no-print">
@@ -125,7 +121,7 @@ function App() {
                 Home
               </button>
             </nav>
-            {route[3] === 0 ? 
+            {route[2] === 0 ? 
               <SetCard route={route} newSet={newSet} goto={goto} /> :
               <Sheet route={route} printPage={printPage} />
             }
@@ -140,13 +136,14 @@ export default App;
 
 
 /* TODO:
-  * Mathjax
-  * SVG Diagrams
-  * √ Client side routing
-  * Help page documentation
   * √ Generate problems in app, not setcard
   * √ Menu option to reload each problem
+  * √ Client-side routing
   * √ Menu options to generate question and answer sheets
   * √ Deploy to gh-pages
+  * √ Seeded PRNG with seed in url fragment
   * PDF download
+  * Mathjax
+  * SVG Diagrams
+  * Help page documentation
 */

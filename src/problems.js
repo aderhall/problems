@@ -5,8 +5,8 @@ let problems = {
       // Question: x + a = b
       // Answer: x = b - a
       // Random integer between -10 and 10
-      let a = Math.floor(21*Math.random()) - 10;
-      let b = Math.floor(21*Math.random()) - 10;
+      let a = Math.floor(21*random.random()) - 10;
+      let b = Math.floor(21*random.random()) - 10;
       return {
         q: [a, b],
         a: b - a
@@ -89,6 +89,13 @@ let collections = {
   "Exponents and compound interest": ["e1"]
 }
 let problemHistory = {};
+function honeypotHistory() {
+  let tmp = problemHistory;
+  problemHistory = {};
+  return () => {
+    problemHistory = tmp;
+  }
+}
 
 let random = {
   names: {
@@ -97,28 +104,62 @@ let random = {
   },
   nouns: ["shoe", "car", "carpet", "rocket", "microscope", "tambourine", "guitar", "envelope", "jetpack", "parachute", "donut", "vegetable"],
   currencies: ["$", "€", "￡"],
+  newRandomSeed() {
+    // Random Uint32
+    return (Math.random() * (-1>>>0))>>>0;
+  },
+  initialize(seed) {
+    // Initialize the first 96 bits of the seed
+    // First 11 digits of PI, E, and PHI
+    let a = 31415926535;
+    let b = 71828182845
+    let c = 16180339887;
+    if (seed === undefined) {
+      seed = this.newRandomSeed();
+    }
+    // sfc32 (short fast counter) PRNG algorithm
+    // Produces uniformly-distributed floats between 0 and 1, with 32 bits of precision
+    this.random = function() {
+      a >>>= 0; b >>>= 0; c >>>= 0; seed >>>= 0; 
+      let t = (a + b) | 0;
+      a = b ^ (b >>> 9);
+      b = c + (c << 3) | 0;
+      c = ((c << 21) | (c >>> 11));
+      seed = seed + 1 | 0;
+      t = t + seed | 0;
+      c = c + t | 0;
+      // Divide by max Uint32 to get a float between 0 and 1
+      return (t >>> 0) / 4294967296;
+    }
+    // Since the first 96 bits of the seed were fixed initially, run the generator a few times to mix everything up
+    for (let i = 0; i < 15; i++) this.random();
+  },
+  random() {
+    // This function will be reassigned when this.initialize() is called
+    throw new Error("PRNG has not been initialized.");
+  },
   int(min, max) {
-    return Math.floor((1 + max - min) * Math.random()) + min;
+    return Math.floor((1 + max - min) * this.random()) + min;
   },
   bool() {
-    return Math.random() >= 0.5;
+    return this.random() >= 0.5;
   },
   float(min, max, places) {
-    let result = Math.random() * (max - min) + min;
+    let result = this.random() * (max - min) + min;
     if (places === undefined) {
       return result;
     }
     return fmt.round(result, places);
   },
   choice(arr) {
-    return arr[Math.floor(arr.length * Math.random())];
+    return arr[Math.floor(arr.length * this.random())];
   },
   name() {
     return this.choice(this.names.male.concat(this.names.female));
   },
   nameAndGender() {
     let allNames = this.names.male.concat(this.names.female);
-    let index = Math.floor(allNames.length * Math.random());
+    let index = Math.floor(allNames.length * this.random());
     return [
       allNames[index],
       index >= this.names.male.length // true if female, false if male
@@ -276,4 +317,4 @@ function stringToDate(string) {
 
 //logProblem(newProblem("expgr1"));
 
-export {newProblem, newProblemData, problems, cleanHistory, collections};
+export {newProblem, newProblemData, problems, cleanHistory, collections, random, honeypotHistory};

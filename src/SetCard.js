@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import "./SetCard.css";
-import {problems} from "./problems";
+import {collections, newProblem, honeypotHistory, random} from "./problems";
 import OutsideClickDetector from "./OutsideClickDetector";
 
 function LineBreakP(props) {
@@ -55,23 +55,39 @@ function SetItem({problem}) {
   );
 }
 
+function getProblems(route) {
+  const [name, seed] = route;
+  let problemList = [];
+  let id;
+  let restoreHistory;
+  restoreHistory = honeypotHistory();
+  random.initialize(seed);
+  for (let i = 0; i < 5; i++) {
+    // Random problem id from the collection topics list
+    id = collections[name][Math.floor(random.random() * collections[name].length)];
+    problemList.push(newProblem(id));
+  }
+  restoreHistory();
+  return problemList;
+}
+
 function SetCard({route, newSet, goto}) {
-  const [name, problemList, idList] = route;
+  const [name, seed] = route;
+  let problemList = getProblems(route);
   return (
     <div className="SetCard">
       <div className="SetCard__header">
         <h2>{name}</h2>
         <DotsMenu items={[
-          ["Export worksheet", () => goto([name, problemList, idList, 1])],
-          ["Export answer sheet", () => goto([name, problemList, idList, 2])],
-          ["Export answers and explanations", () => goto([name, problemList, idList, 3])],
+          ["Export worksheet", () => goto([name, seed, 1])],
+          ["Export answer sheet", () => goto([name, seed, 2])],
+          ["Export answers and explanations", () => goto([name, seed, 3])],
           ["Reload all problems", () => newSet(name)]
         ]}/>
       </div>
       <hr />
       <ol className="SetCard__list">
-        {problemList.map((problemData, index) => {
-          let problem = problems[idList[index]].format(problemData);
+        {problemList.map(problem => {
           return <SetItem key={problem.question} problem={problem}/>
         })}
       </ol>
@@ -80,7 +96,9 @@ function SetCard({route, newSet, goto}) {
 }
 
 function Sheet({route, printPage}) {
-  const [name, problemList, idList, mode] = route;
+  // eslint-disable-next-line no-unused-vars
+  const [name, _seed, mode] = route;
+  let problemList = getProblems(route);
   return (
     <div className="SetCard">
       <div className="SetCard__header">
@@ -89,8 +107,7 @@ function Sheet({route, printPage}) {
       </div>
       <hr />
       <ol className="SetCard__list">
-        {problemList.map((problemData, index) => {
-          let problem = problems[idList[index]].format(problemData);
+        {problemList.map(problem => {
           let data;
           switch (mode) {
             case 1:
@@ -107,9 +124,9 @@ function Sheet({route, printPage}) {
               }
               break;
             default:
-              break;
+              throw new Error(`Unrecognized mode: ${mode}`);
           }
-          return <li key={JSON.stringify(problemData)}>
+          return <li key={problem.question}>
             <LineBreakP>{data}</LineBreakP>
           </li>
         })}
