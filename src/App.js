@@ -142,7 +142,7 @@ export default App;
   * √ Menu options to generate question and answer sheets
   * √ Deploy to gh-pages
   * √ Seeded PRNG with seed in url fragment
-  * PDF download
+  * X PDF download
   * Mathjax
   * SVG Diagrams
   * Help page documentation
