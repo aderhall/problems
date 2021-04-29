@@ -76,8 +76,8 @@ function SetCard({route, newSet, goto}) {
       </div>
       <hr />
       <ol className="SetCard__list">
-        {problemList.map((problem, index) => {
-          return <SetItem key={index} problem={problem}/>
+        {problemList.map(problem => {
+          return <SetItem key={problem.id} problem={problem}/>
         })}
       </ol>
     </div>
@@ -96,7 +96,7 @@ function Sheet({route, printPage}) {
       </div>
       <hr />
       <ol className="SetCard__list">
-        {problemList.map((problem, index) => {
+        {problemList.map(problem => {
           let data;
           switch (mode) {
             case 1:
@@ -115,7 +115,7 @@ function Sheet({route, printPage}) {
             default:
               throw new Error(`Unrecognized mode: ${mode}`);
           }
-          return <li key={index}>
+          return <li key={problem.id}>
             <div>{data}</div>
           </li>
         })}

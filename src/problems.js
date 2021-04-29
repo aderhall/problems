@@ -215,7 +215,13 @@ function stringToDate(string) {
 // Returns a new problem object if possible
 // Returns null if unable to create a unique problem not already in problemHistory
 function newProblem(id) {
-  return problems[id].format(newProblemData(id));
+  let data = newProblemData(id);
+  let result = problems[id].format(data);
+  // If an id property hasn't been defined, make a unique one
+  if (result.id === undefined) {
+    result.id = JSON.stringify(data.q) + id;
+  }
+  return result;
 }
 // Tries to create a unique problem object. If it fails, it will fall back on a recent problem
 function newProblemData(id) {
