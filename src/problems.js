@@ -5,11 +5,8 @@ let problems = {
   "l1": {
     name: "solving simple linear equations",
     generate() {
-      // Question: x + a = b
-      // Answer: x = b - a
-      // Random integer between -10 and 10
-      let a = Math.floor(21*random.random()) - 10;
-      let b = Math.floor(21*random.random()) - 10;
+      let a = random.nonZeroInt(-10, 10);
+      let b = random.nonZeroInt(-10, 10);
       return {
         q: [a, b],
         a: b - a
@@ -18,7 +15,7 @@ let problems = {
     format({q, a}) {
       return {
         question: <span>
-          <Katex>x + {q[0]} = {q[1]}</Katex>
+          <Katex>{algebra.formatExpression("x", q[0])}={q[1]}</Katex>
           <br/>
           Solve for <K m="x"/>
         </span>,
@@ -37,8 +34,8 @@ let problems = {
   "l2": {
     name: "solving simple linear equations with multiplication",
     generate() {
-      let coefficient = random.int(3, 25);
-      let rhs = random.int(1, 10)
+      let coefficient = random.sign() * random.int(3, 25);
+      let rhs = random.sign() * random.int(1, 10);
       return {
         q: [coefficient, coefficient * rhs],
         a: rhs

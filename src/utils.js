@@ -80,8 +80,21 @@ let random = {
   int(min, max) {
     return Math.floor((1 + max - min) * this.random()) + min;
   },
+  nonZeroInt(min, max) {
+    if (min > 0 || max < 0) {
+      return this.int(min, max);
+    }
+    let result = this.int(min, max - 1);
+    if (result >= 0) {
+      return result + 1;
+    }
+    return result;
+  },
   bool() {
     return this.random() >= 0.5;
+  },
+  sign() {
+    return this.bool() ? 1 : -1;
   },
   float(min, max, places) {
     let result = this.random() * (max - min) + min;
@@ -220,6 +233,29 @@ let algebra = {
   simplifyFraction(n, d) {
     let gcf = this.gcf(n, d);
     return [n / gcf, d / gcf];
+  },
+  formatTerm(factors) {
+    // [-5, 3, "x^{11}", -1, "y", -2] -> "-30x^{11}y"
+    let coefficient = 1;
+    let acc = "";
+    for (let factor of factors) {
+      if (typeof(factor) === "number") {
+        coefficient *= factor;
+      } else {
+        acc += factor;
+      }
+    }
+    return coefficient + acc;
+  },
+  formatExpression(...terms) {
+    return terms.map(term => {
+      if (Array.isArray(term)) {
+        return this.formatTerm(term);
+      } else if (typeof(term) === "number") {
+        return term.toString();
+      }
+      return term;
+    }).reduce((acc, term, index) => acc + (term[0] === "-" || index === 0 ? "" : "+") + term, "");
   }
 }
 
