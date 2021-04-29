@@ -44,7 +44,7 @@ let problems = {
           <ul>
             <li>Mass: <Katex>{dv} / {volume} = {fmt.round(dv / volume, 5)}</Katex></li>
             <li>Specific heat capacity is a literature value, so we assume it is infinitely precise.</li>
-            <li>Temperature rise: when finding the uncertainty of an added sum, we add the absolute uncertainties. Here, the uncertainty in both the initial and final temperature is <K m={dT}/>, so the absolute uncertainty in the temperature rise is <Katex>2 * {dT} = {2* dT}\,\pu K</Katex>. Dividing this by the temperature rise (<Katex>{final - initial}\,\pu K</Katex>) gives us <K m={fmt.round(2 * dT / (final - initial), 5)}/></li>
+            <li>Temperature rise: when finding the uncertainty of an added sum, we add the absolute uncertainties. Here, the uncertainty in both the initial and final temperature is <K m={dT}/>, so the absolute uncertainty in the temperature rise is <Katex>{dT}+{dT} = {2* dT}\,\pu K</Katex>. Dividing this by the temperature rise (<Katex>{final - initial}\,\pu K</Katex>) gives us <K m={fmt.round(2 * dT / (final - initial), 5)}/></li>
           </ul>
           <p>Adding these fractional uncertainties gives us an overall fractional uncertainty of <K m={fmt.round(fracUncertainty, 5)}/>. Multiplying this by the change in energy (<Katex>{deltaE}\pu J</Katex>) gives us <Katex>±{uncertainty}\pu J</Katex></p>
         </>
