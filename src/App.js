@@ -5,9 +5,6 @@ import {cleanHistory, collections, random} from "./problems";
 
 const BASE_PATH = "/problems";
 
-//random.initialize(10);
-//for (let i = 0; i < 5; i++) console.log(random.random());
-
 function Choice({name, onClick}) {
   return (
     <button className="Choice" onClick={onClick}>
@@ -56,7 +53,6 @@ function getRouteFromUrl() {
   }
 }
 function navigateToRoute(route) {
-  // eslint-disable-next-line no-unused-vars
   const [name, seed, mode] = route;
   if (name !== null) {
     window.history.pushState(route, "", `${BASE_PATH}#!${name}/${encodeData(seed, mode)}`);

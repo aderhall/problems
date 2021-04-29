@@ -33,7 +33,7 @@ function FracN({n, d}) {
 
 let misc = {
   range(min, max) {
-    return [...Array(max).keys()].slice(min);
+    return Array(max - min).fill().map((_item, idx) => idx + min);
   }
 }
 let random = {
