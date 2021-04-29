@@ -140,6 +140,7 @@ export default App;
   * √ Seeded PRNG with seed in url fragment
   * X PDF download
   * √ Katex
+  * Lazy loading problems
   * SVG Diagrams
   * Help page documentation
 */
