@@ -1,5 +1,6 @@
 import React, {useRef, useEffect} from "react";
 import katex from "katex";
+require("katex/dist/contrib/mhchem.js");
 
 function Katex({children, display}) {
   if (display === undefined) {
@@ -29,6 +30,12 @@ function FracN({n, d}) {
   } else {
     return <Katex>\frac{`{${n}}{${d}}`}</Katex>
   }
+}
+function pu(m) {
+  return `\\pu{${m}}`;
+}
+function Pu({m}) {
+  return <K m={pu(m)}/>;
 }
 
 let misc = {
@@ -259,4 +266,4 @@ let algebra = {
   }
 }
 
-export {random, fmt, Katex, K, FracN, misc, algebra};
+export {random, fmt, Katex, K, FracN, Pu, pu, misc, algebra};
