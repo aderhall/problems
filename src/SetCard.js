@@ -107,7 +107,11 @@ function Sheet({route, printPage}) {
               break;
             case 3:
               if (problem.explanation) {
-                data = `${problem.answer}\n\n${problem.explanation}`;
+                data = <>
+                  {problem.answer}
+                  <br/>
+                  {problem.explanation}
+                </>
               } else {
                 data = problem.answer;
               }
