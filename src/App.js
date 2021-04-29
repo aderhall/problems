@@ -143,7 +143,7 @@ export default App;
   * √ Deploy to gh-pages
   * √ Seeded PRNG with seed in url fragment
   * X PDF download
-  * Mathjax
+  * √ Katex
   * SVG Diagrams
   * Help page documentation
 */

@@ -1,3 +1,6 @@
+import React from "react";
+import {random, fmt, Katex, K, FracN, algebra} from "./utils";
+
 let problems = {
   "l1": {
     name: "solving simple linear equations",
@@ -14,10 +17,17 @@ let problems = {
     },
     format({q, a}) {
       return {
-        question: `x + ${q[0]} = ${q[1]}\nSolve for x`,
-        answer: `x = ${a}`,
-        explanation: `To get only x on the left side, we can subtract ${q[0]} from both sides.
-        This gives us ${q[1]} - ${q[0]} on the right-hand-side: ${a}.`
+        question: <span>
+          <Katex>x + {q[0]} = {q[1]}</Katex>
+          <br/>
+          Solve for <K m="x"/>
+        </span>,
+        answer: <Katex>x = {a}</Katex>,
+        explanation: <span>
+          To get only <K m="x"/> on the left side, we can subtract <K m={q[0]}/> from both sides.
+          <br/>
+          This gives us <Katex>{q[1]} - {q[0]}</Katex> on the right-hand-side: <K m={a}/>.
+        </span>
       }
     },
     turnover: 200,
@@ -36,8 +46,12 @@ let problems = {
     },
     format({q, a}) {
       return {
-        question: `${q[0]}x = ${q[1]}\nSolve for x`,
-        answer: `x = ${a}`
+        question: <span>
+          <Katex>{q[0]}x = {q[1]}</Katex>
+          <br/>
+          Solve for <K m="x"/>
+        </span>,
+        answer: <Katex>x = {a}</Katex>
       }
     }
   },
@@ -57,9 +71,17 @@ let problems = {
       let multiplier = 1 + (q[1] ? 0.01 : -0.01) * q[2];
       let answer = q[0] * Math.pow(multiplier, q[3]);
       return {
-        question: `${name} ${variant ? "buys" : "deposits"} ${currency}${fmt.toNPlaces(q[0], 2)} ${variant ? "worth of stock" : ""} in ${variant ? `${fmt.indArticle(noun)} ${noun} company` : "a bank"}. Every year, their ${variant ? "stock price" : "balance"} ${q[1] ? "increases" : "decreases"} by ${q[2]}%. After ${q[3]} years, how much money is ${variant ? "the stock worth" : "in their bank account"}?`,
-        answer: `${currency}${fmt.toNPlaces(answer, 2)}`,
-        explanation: `${name}'s ${variant ? "stock price" : "balance"} ${q[1] ? "increases" : "decreases"} by ${q[2]}% per year, so each year its value changes by a factor of ${multiplier}.\nRepeatedly multiplying by ${multiplier}, ${q[3]} times, is the same as taking ${multiplier} to the power of ${q[3]}, which is ${fmt.round(Math.pow(multiplier, q[3]), 3)}.\nMultiplying this by the initial amount gives us ${fmt.round(answer, 3)}.`
+        question: <span>
+          {name} {variant ? "buys" : "deposits"} {currency}<K m={fmt.toNPlaces(q[0], 2)}/> {variant ? "worth of stock" : ""} in {variant ? `${fmt.indArticle(noun)} ${noun} company` : "a bank"}. Every year, their {variant ? "stock price" : "balance"} {q[1] ? "increases" : "decreases"} by <K m={q[2]}/>%. After <K m={q[3]}/> years, how much money is {variant ? "the stock worth" : "in their bank account"}?
+        </span>,
+        answer: <span>{currency}<K m={fmt.toNPlaces(answer, 2)}/></span>,
+        explanation: <span>
+          {name}'s {variant ? "stock price" : "balance"} {q[1] ? "increases" : "decreases"} by <K m={q[2]}/>% per year, so each year its value changes by a factor of <K m={multiplier}/>.
+          <br/>
+          Repeatedly multiplying by <K m={multiplier}/>, <K m={q[3]}/> times, is the same as taking <K m={multiplier}/> to the power of <K m={q[3]}/>, which is <K m={fmt.round(Math.pow(multiplier, q[3]), 3)}/>.
+          <br/>
+          Multiplying this by the initial amount gives us <K m={fmt.round(answer, 3)}/>.
+        </span>
       }
     },
     turnover: 1000,
@@ -82,12 +104,38 @@ let problems = {
     turnover: 0,
     documented: false,
     calculator: false
+  },
+  "c1": {
+    name: "integration",
+    generate() {
+      return {
+        q: [random.int(1, 9), random.int(2, 10)]
+      }
+    },
+    format({q}) {
+      const [n, d] = algebra.simplifyFraction(q[0], q[1]+1);
+      return {
+        question: <span>
+          Work out the indefinite integral:
+          <br/>
+          <Katex display={true}>\int {q[0]}x^{`{${q[1]}}`}dx</Katex>
+        </span>,
+        answer: <span>
+          <FracN n={n} d={d}/><Katex>x^{`{${q[1]+1}}`}</Katex>
+        </span>
+      }
+    },
+    turnover: 30,
+    documented: false,
+    calculator: false
   }
 };
 let collections = {
   "Algebra": ["l1", "l2"],
-  "Exponents and compound interest": ["e1"]
+  "Exponents and compound interest": ["e1"],
+  "Calculus": ["c1"]
 }
+
 let problemHistory = {};
 function honeypotHistory() {
   let tmp = problemHistory;
@@ -96,140 +144,6 @@ function honeypotHistory() {
     problemHistory = tmp;
   }
 }
-
-let random = {
-  names: {
-    male: ["Bill", "Bob", "Jebediah", "Mohamed", "Karim", "Habib", "Santiago", "Gabriel", "Jayden", "Liam", "Noah", "James", "Ali", "Omar", "Yusif", "Wei", "Jie", "Hao", "Arjun", "Reyansh", "Ayaan", "Ori", "Ahmad", "Haruki", "Riku", "Lucas", "Nathan", "Stefan", "Leonardo", "Francesco", "Alessandro", "Leo", "Jack", "Sergei", "Taika"],
-    female: ["Valentina", "Roxanne", "Lola", "Fatima", "Mariam", "Rowan", "Mariana", "Lucia", "Camila", "Olivia", "Charlotte", "Emma", "Leyla", "Zeynab", "Salma", "Jing", "Ying", "Yan", "Aadya", "Diya", "Saanvi", "Sarah", "Jana", "Honoka", "Akari", "Anna", "Sophia", "Yasmine", "Ginevra", "Beatrice", "Aurora", "Stella", "Lucy", "Anastasia", "Mia"]
-  },
-  nouns: ["shoe", "car", "carpet", "rocket", "microscope", "tambourine", "guitar", "envelope", "jetpack", "parachute", "donut", "vegetable"],
-  currencies: ["$", "€", "￡"],
-  newRandomSeed() {
-    // Random Uint32
-    return (Math.random() * (-1>>>0))>>>0;
-  },
-  initialize(seed) {
-    // Initialize the first 96 bits of the seed
-    // First 11 digits of PI, E, and PHI
-    let a = 31415926535;
-    let b = 71828182845
-    let c = 16180339887;
-    if (seed === undefined) {
-      seed = this.newRandomSeed();
-    }
-    // sfc32 (short fast counter) PRNG algorithm
-    // Produces uniformly-distributed floats between 0 and 1, with 32 bits of precision
-    this.random = function() {
-      a >>>= 0; b >>>= 0; c >>>= 0; seed >>>= 0; 
-      let t = (a + b) | 0;
-      a = b ^ (b >>> 9);
-      b = c + (c << 3) | 0;
-      c = ((c << 21) | (c >>> 11));
-      seed = seed + 1 | 0;
-      t = t + seed | 0;
-      c = c + t | 0;
-      // Divide by max Uint32 to get a float between 0 and 1
-      return (t >>> 0) / 4294967296;
-    }
-    // Since the first 96 bits of the seed were fixed initially, run the generator a few times to mix everything up
-    for (let i = 0; i < 15; i++) this.random();
-  },
-  random() {
-    // This function will be reassigned when this.initialize() is called
-    throw new Error("PRNG has not been initialized.");
-  },
-  int(min, max) {
-    return Math.floor((1 + max - min) * this.random()) + min;
-  },
-  bool() {
-    return this.random() >= 0.5;
-  },
-  float(min, max, places) {
-    let result = this.random() * (max - min) + min;
-    if (places === undefined) {
-      return result;
-    }
-    return fmt.round(result, places);
-  },
-  choice(arr) {
-    return arr[Math.floor(arr.length * this.random())];
-  },
-  name() {
-    return this.choice(this.names.male.concat(this.names.female));
-  },
-  nameAndGender() {
-    let allNames = this.names.male.concat(this.names.female);
-    let index = Math.floor(allNames.length * this.random());
-    return [
-      allNames[index],
-      index >= this.names.male.length // true if female, false if male
-    ]
-  },
-  noun() {
-    return this.choice(this.nouns);
-  },
-  currency() {
-    return this.choice(this.currencies);
-  },
-  money(min, max) {
-    return this.float(min, max, 2);
-  }
-}
-let fmt = {
-  indArticle(word) {
-    if (word[0] in ["a", "e", "i", "o", "u"]) {
-      return "an";
-    } else {
-      return "a";
-    }
-  },
-  round(number, places) {
-    return Math.round(number * Math.pow(10, places)) / Math.pow(10, places);
-  },
-  toNPlaces(number, places) {
-    let s = this.round(number, places).toString();
-    if (places > 0) {
-      let pointIndex = s.indexOf(".")
-      if (pointIndex === -1) {
-        s += ".";
-        pointIndex = s.length - 1;
-      }
-      let remainingZeros = places - (s.length - 1 - pointIndex)
-      for (let i = 0; i < remainingZeros; i++) {
-        s += "0";
-      }
-    }
-    return s;
-  }
-}
-
-//function logProblem(problem) {
-//  for (let prop in problem) {
-//    console.log(`${prop}: `, problem[prop]);
-//  }
-//}
-
-// Returns a new problem object if possible
-// Returns null if unable to create a unique problem not already in problemHistory
-function newProblem(id) {
-  return problems[id].format(newProblemData(id));
-}
-// Tries to create a unique problem object. If it fails, it will fall back on a recent problem
-function newProblemData(id) {
-  let data;
-  // Generate up to 200 problems, before deciding that all possibilities are exhausted and we should just return an old problem
-  for (let count = 0; count < 200; count++) {
-    data = problems[id].generate();
-    if (tryAddToHistory(id, data.q)) {
-      return data;
-    } else {
-      trimHistory(id);
-    }
-  }
-  console.warn(`Unable to create unique problem (id: ${id}, data: ${data})`);
-  return data;
-}
-
 // Returns true if successful, false if already in problemHistory
 function tryAddToHistory(id, q) {
   // TODO: This only looks at today's problemHistory, it should look at all problemHistory
@@ -258,7 +172,6 @@ function tryAddToHistory(id, q) {
   problemHistory[id][today].push(q);
   return true;
 }
-
 // Removes the oldest item from the specified id's history if the turnover has been reached
 function trimHistory(id) {
   let sum = 0;
@@ -276,7 +189,6 @@ function trimHistory(id) {
     problemHistory[id][dateToString(oldest)].shift();
   }
 }
-
 // Removes all entries from problemHistory that are older than 3 weeks
 function cleanHistory() {
   let now = new Date();
@@ -303,18 +215,25 @@ function stringToDate(string) {
   return new Date(ys, ms, ds)
 }
 
-//function testHistory() {
-//  let problem;
-//  for (let i = 0; i < 3; i++) {
-//    problem = newProblem("dummy");
-//    if (problem === null) {
-//      console.log("null");
-//    } else {
-//      logProblem(problem);
-//    }
-//  }
-//}
-
-//logProblem(newProblem("expgr1"));
+// Returns a new problem object if possible
+// Returns null if unable to create a unique problem not already in problemHistory
+function newProblem(id) {
+  return problems[id].format(newProblemData(id));
+}
+// Tries to create a unique problem object. If it fails, it will fall back on a recent problem
+function newProblemData(id) {
+  let data;
+  // Generate up to 200 problems, before deciding that all possibilities are exhausted and we should just return an old problem
+  for (let count = 0; count < 200; count++) {
+    data = problems[id].generate();
+    if (tryAddToHistory(id, data.q)) {
+      return data;
+    } else {
+      trimHistory(id);
+    }
+  }
+  console.warn(`Unable to create unique problem (id: ${id}, data: ${data})`);
+  return data;
+}
 
 export {newProblem, newProblemData, problems, cleanHistory, collections, random, honeypotHistory};

@@ -3,17 +3,6 @@ import "./SetCard.css";
 import {collections, newProblem, honeypotHistory, random} from "./problems";
 import OutsideClickDetector from "./OutsideClickDetector";
 
-function LineBreakP(props) {
-  return <p {...props}>
-    {props.children.split(/(?:\r\n|\r|\n)/).map((item, index) => (
-      <React.Fragment key={index}>
-        {item}
-        <br />
-      </React.Fragment>
-    ))}
-  </p>
-}
-
 function DotsMenu(props) {
   const [open, setOpen] = useState(false);
   
@@ -36,19 +25,19 @@ function SetItem({problem}) {
   const [expVisible, setExpVisible] = useState(false);
   return (
     <li>
-      <LineBreakP className="SetItem__question">{problem.question}</LineBreakP>
+      <div className="SetItem__question">{problem.question}</div>
       <button className="link-button" onClick={() => setAnswerVisible(!answerVisible)}>
         {answerVisible ? "Hide answer" : "Show answer"}
       </button>
       <div className={"SetItem__answer-section" + (answerVisible ? " open" : "")}>
-        <LineBreakP className="SetItem__answer">{problem.answer}</LineBreakP>
+        <div className="SetItem__answer">{problem.answer}</div>
         {problem.explanation && <>
           <button className="link-button" onClick={() => setExpVisible(!expVisible)}>
             {expVisible ? "Hide explanation" : "Show explanation"}
           </button>
-          <LineBreakP className={"SetItem__explanation" + (expVisible ? " open" : "")}>
+          <div className={"SetItem__explanation" + (expVisible ? " open" : "")}>
             {problem.explanation}
-          </LineBreakP>
+          </div>
         </>}
       </div>
     </li>
@@ -87,8 +76,8 @@ function SetCard({route, newSet, goto}) {
       </div>
       <hr />
       <ol className="SetCard__list">
-        {problemList.map(problem => {
-          return <SetItem key={problem.question} problem={problem}/>
+        {problemList.map((problem, index) => {
+          return <SetItem key={index} problem={problem}/>
         })}
       </ol>
     </div>
@@ -107,7 +96,7 @@ function Sheet({route, printPage}) {
       </div>
       <hr />
       <ol className="SetCard__list">
-        {problemList.map(problem => {
+        {problemList.map((problem, index) => {
           let data;
           switch (mode) {
             case 1:
@@ -126,8 +115,8 @@ function Sheet({route, printPage}) {
             default:
               throw new Error(`Unrecognized mode: ${mode}`);
           }
-          return <li key={problem.question}>
-            <LineBreakP>{data}</LineBreakP>
+          return <li key={index}>
+            <div>{data}</div>
           </li>
         })}
       </ol>
