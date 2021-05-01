@@ -65,12 +65,19 @@ function SetCard({route, newSet, goto}) {
     <div className="SetCard">
       <div className="SetCard__header">
         <h2>{name}</h2>
-        <DotsMenu items={[
-          ["Export worksheet", () => goto([name, seed, 1])],
-          ["Export answer sheet", () => goto([name, seed, 2])],
-          ["Export answers and explanations", () => goto([name, seed, 3])],
-          ["Reload all problems", () => newSet(name)]
-        ]}/>
+        <div className="SetCard__buttons">
+          <button onClick={() => newSet(name)}>
+            <svg width="24px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+          <DotsMenu items={[
+            ["Export worksheet", () => goto([name, seed, 1])],
+            ["Export answer sheet", () => goto([name, seed, 2])],
+            ["Export answers and explanations", () => goto([name, seed, 3])],
+            ["Reload all problems", () => newSet(name)]
+          ]}/>
+        </div>
       </div>
       <hr />
       <ol className="SetCard__list">

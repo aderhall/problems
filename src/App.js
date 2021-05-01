@@ -141,7 +141,7 @@ export default App;
   * X PDF download
   * √ Katex
   * √ Remove coefficient of 1 in formatTerm
-  * Reload button easier to access
+  * √ Reload button easier to access
   * Lazy loading problems
   * Some way to limit problems that have already come up?
   * SVG Diagrams

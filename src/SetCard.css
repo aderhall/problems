@@ -29,6 +29,10 @@
   padding-left: 1.5em;
 }
 
+.SetCard__buttons {
+  display: flex;
+}
+
 .SetCard__list>li {
   line-height: 2em;
   margin-top: 1.5em;
@@ -60,7 +64,7 @@
   position: relative;
 }
 
-.DotsMenu__button {
+.DotsMenu__button, .SetCard__buttons>button {
   height: 24px;
   width: 24px;
   border: 0;
@@ -69,8 +73,9 @@
   box-sizing: content-box;
   background-color: transparent;
   cursor: pointer;
+  color: #222;
 }
-.DotsMenu:focus-within > .DotsMenu__button {
+.DotsMenu:focus-within > .DotsMenu__button, .SetCard__buttons>button:focus {
   outline: 0;
   background-color: #efefef;
 }
