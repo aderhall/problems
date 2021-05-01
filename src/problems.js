@@ -35,7 +35,7 @@ let problems = {
   "l2": {
     name: "solving simple linear equations with multiplication",
     generate() {
-      let coefficient = random.sign() * random.int(3, 25);
+      let coefficient = random.sign() * random.int(3, 9);
       let rhs = random.sign() * random.int(1, 10);
       return {
         q: [coefficient, coefficient * rhs],
@@ -45,7 +45,7 @@ let problems = {
     format({q, a}) {
       return {
         question: <span>
-          <Katex>{q[0]}x = {q[1]}</Katex>
+          <Katex>{algebra.formatEquation([[q[0], "x"]], [q[1]])}</Katex>
           <br/>
           Solve for <K m="x"/>
         </span>,

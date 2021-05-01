@@ -252,6 +252,11 @@ let algebra = {
         acc += factor;
       }
     }
+    if (coefficient === 1) {
+      coefficient = "";
+    } else if (coefficient === -1) {
+      coefficient = "-";
+    }
     return coefficient + acc;
   },
   formatExpression(...terms) {
@@ -263,6 +268,9 @@ let algebra = {
       }
       return term;
     }).reduce((acc, term, index) => acc + (term[0] === "-" || index === 0 ? "" : "+") + term, "");
+  },
+  formatEquation(lhs, rhs) {
+    return this.formatExpression(...lhs) + "=" + this.formatExpression(...rhs);
   }
 }
 

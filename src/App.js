@@ -140,7 +140,10 @@ export default App;
   * √ Seeded PRNG with seed in url fragment
   * X PDF download
   * √ Katex
+  * √ Remove coefficient of 1 in formatTerm
+  * Reload button easier to access
   * Lazy loading problems
+  * Some way to limit problems that have already come up?
   * SVG Diagrams
   * Help page documentation
 */
