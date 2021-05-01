@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from "react";
+import React, {useRef, useLayoutEffect} from "react";
 import katex from "katex";
 require("katex/dist/contrib/mhchem.js");
 
@@ -13,7 +13,7 @@ function Katex({children, display}) {
     children = children.toString();
   }
   const spanRef = useRef();
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (spanRef !== null) {
       katex.render(children, spanRef.current, {displayMode: display, fleqn: true});
     }
