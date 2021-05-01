@@ -50,6 +50,7 @@ let random = {
   },
   nouns: ["shoe", "car", "carpet", "rocket", "microscope", "tambourine", "guitar", "envelope", "jetpack", "parachute", "donut", "vegetable"],
   currencies: ["$", "€", "￡"],
+  variables: ["a", "b", "c", "d", "m", "n", "p", "q", "r", "t", "w", "x", "y", "z"],
   newRandomSeed() {
     // Random Uint32
     return (Math.random() * (-1>>>0))>>>0;
@@ -97,6 +98,22 @@ let random = {
     }
     return result;
   },
+  uniqueInts(min, max, count, nonZero) {
+    if (count > max - min) {
+      if ((count > 1 + max - min) || (nonZero && max >= 0 && min <= 0)) {
+        throw new Error("Range is too small to generate enough ints");
+      }
+    }
+    let ints = [];
+    let int;
+    for (let i = 0; i < count; i++) {
+      do {
+        int = nonZero ? this.nonZeroInt(min, max) : this.int(min, max);
+      } while (ints.indexOf(int) !== -1);
+      ints.push(int);
+    }
+    return ints;
+  },
   bool() {
     return this.random() >= 0.5;
   },
@@ -112,6 +129,10 @@ let random = {
   },
   choice(arr) {
     return arr[Math.floor(arr.length * this.random())];
+  },
+  uniqueVariables(count) {
+    let indices = this.uniqueInts(0, this.variables.length, count, false);
+    return indices.map(index => this.variables[index]);
   },
   name() {
     return this.choice(this.names.male.concat(this.names.female));
@@ -252,10 +273,12 @@ let algebra = {
         acc += factor;
       }
     }
-    if (coefficient === 1) {
-      coefficient = "";
-    } else if (coefficient === -1) {
-      coefficient = "-";
+    if (acc) {
+      if (coefficient === 1) {
+        coefficient = "";
+      } else if (coefficient === -1) {
+        coefficient = "-";
+      }
     }
     return coefficient + acc;
   },
