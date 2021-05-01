@@ -1,6 +1,7 @@
 import React from "react";
 import {random, fmt, Katex, K, FracN, algebra} from "./utils";
 import physics from "./problems/physics";
+import math from "./problems/math";
 
 let problems = {
   "l1": {
@@ -127,13 +128,15 @@ let problems = {
     documented: false,
     calculator: false
   },
-  ...physics
+  ...physics,
+  ...math
 };
 let collections = {
   "Algebra": ["l1", "l2"],
   "Exponents and compound interest": ["e1"],
   "Calculus": ["c1"],
-  "Physics": ["thermal1"]
+  "Physics": ["thermal1"],
+  "Simultaneous equations": ["simult1"]
 }
 
 let problemHistory = {};
