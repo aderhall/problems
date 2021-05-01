@@ -131,7 +131,7 @@ let random = {
     return arr[Math.floor(arr.length * this.random())];
   },
   uniqueVariables(count) {
-    let indices = this.uniqueInts(0, this.variables.length, count, false);
+    let indices = this.uniqueInts(0, this.variables.length-1, count, false);
     return indices.map(index => this.variables[index]);
   },
   name() {
