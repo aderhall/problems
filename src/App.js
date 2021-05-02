@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import './App.css';
 import {SetCard, Sheet} from "./SetCard";
 import {cleanHistory, collections, random} from "./problems";
+import {SetError} from "./error";
 
 const BASE_PATH = "/problems";
 
@@ -117,10 +118,12 @@ function App() {
                 Home
               </button>
             </nav>
-            {route[2] === 0 ? 
-              <SetCard route={route} newSet={newSet} goto={goto} /> :
-              <Sheet route={route} printPage={printPage} />
-            }
+            <SetError>
+              {route[2] === 0 ? 
+                <SetCard route={route} newSet={newSet} goto={goto} /> :
+                <Sheet route={route} printPage={printPage} />
+              }
+            </SetError>
           </>
         }
       </main>
@@ -142,6 +145,7 @@ export default App;
   * √ Katex
   * √ Remove coefficient of 1 in formatTerm
   * √ Reload button easier to access
+  * √ Error boundaries
   * Lazy loading problems
   * Some way to limit problems that have already come up?
   * SVG Diagrams

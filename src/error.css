@@ -1,0 +1,13 @@
+.SetError {
+  border-radius: 5px;
+  background-color: #ffaaaa;
+  border: 2px solid #f44;
+  padding: 1em 2em;
+  margin: 1em 0;
+  line-height: 1.5em;
+  font-size: 1.15em;
+}
+
+.SetError h2 {
+  font-weight: 400;
+}
