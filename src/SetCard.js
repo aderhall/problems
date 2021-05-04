@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useLayoutEffect, useState} from "react";
 import "./SetCard.css";
 import {getIdList, newProblem, honeypotHistory} from "./problems";
 import {random} from "./utils";
@@ -63,7 +63,7 @@ async function getProblems(route) {
 function SetCard({route, newSet, goto}) {
   const [name, seed] = route;
   let [problemList, setProblemList] = useState(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     getProblems(route).then(list => setProblemList(list));
   }, [route]);
   return (
@@ -86,7 +86,7 @@ function SetCard({route, newSet, goto}) {
       </div>
       <hr />
       {problemList === null ? 
-      <p>Loading...</p> :
+      <p>Loading problems...</p> :
       <ol className="SetCard__list">
         {problemList.map(problem => {
           return <SetItem key={problem.id} problem={problem}/>
