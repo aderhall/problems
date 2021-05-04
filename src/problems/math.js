@@ -1,38 +1,39 @@
-import React from "react";
-import {random, algebra, K, Katex} from "../utils";
+import {random, fmt, K} from "../utils";
 
 let problems = {
-  "simult1": {
+  "e1": {
+    name: "calculating exponential growth",
     generate() {
-      let solution = [random.int(-5, 5), random.int(-5, 5)];
-      let v1 = random.uniqueInts(-5, 5, 2, true);
-      let v2 = random.uniqueInts(-5, 5, 2, true);
+      let variant = random.bool();
       return {
-        q: {
-          eq1: [v1[1], -v1[0], v1[1]*solution[0] - v1[0]*solution[1]],
-          eq2: [v2[1], -v2[0], v2[1]*solution[0] - v2[0]*solution[1]]
-        },
-        varnames: random.uniqueVariables(2),
-        a: solution
+        q: [random.int(15, 10000), random.bool(), random.int(1, 10) / 2, random.int(3, 20)],
+        name: random.name(),
+        noun: variant ? random.noun() : 0,
+        currency: random.currency(),
+        variant: variant
       }
     },
-    format({q: {eq1, eq2}, varnames, a}) {
+    format({q, name, noun, currency, variant}) {
+      let multiplier = 1 + (q[1] ? 0.01 : -0.01) * q[2];
+      let answer = q[0] * Math.pow(multiplier, q[3]);
       return {
         question: <span>
-          Solve the simultaneous equations to find the values of <K m={varnames[0]}/> and <K m={varnames[1]}/>.
-          <Katex display={true}>{algebra.formatEquation(
-            [[eq1[0], varnames[0]], [eq1[1], varnames[1]]],
-            [[eq1[2]]]
-          )}</Katex>
-          <Katex display={true}>{algebra.formatEquation(
-            [[eq2[0], varnames[0]], [eq2[1], varnames[1]]],
-            [[eq2[2]]]
-          )}</Katex>
+          {name} {variant ? "buys" : "deposits"} {currency}<K m={fmt.toNPlaces(q[0], 2)}/> {variant ? "worth of stock" : ""} in {variant ? `${fmt.indArticle(noun)} ${noun} company` : "a bank"}. Every year, their {variant ? "stock price" : "balance"} {q[1] ? "increases" : "decreases"} by <K m={q[2]}/>%. After <K m={q[3]}/> years, how much money is {variant ? "the stock worth" : "in their bank account"}?
         </span>,
-        answer: <Katex>{varnames[0]}={a[0]},\,{varnames[1]}={a[1]}</Katex>
+        answer: <span>{currency}<K m={fmt.toNPlaces(answer, 2)}/></span>,
+        explanation: <span>
+          {name}'s {variant ? "stock price" : "balance"} {q[1] ? "increases" : "decreases"} by <K m={q[2]}/>% per year, so each year its value changes by a factor of <K m={multiplier}/>.
+          <br/>
+          Repeatedly multiplying by <K m={multiplier}/>, <K m={q[3]}/> times, is the same as taking <K m={multiplier}/> to the power of <K m={q[3]}/>, which is <K m={fmt.round(Math.pow(multiplier, q[3]), 3)}/>.
+          <br/>
+          Multiplying this by the initial amount gives us <K m={fmt.round(answer, 3)}/>.
+        </span>
       }
-    }
+    },
+    turnover: 1000,
+    documented: false,
+    calculator: true
   }
-};
+}
 
 export default problems;

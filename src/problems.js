@@ -1,146 +1,25 @@
-import React from "react";
-import {random, fmt, Katex, K, FracN, algebra} from "./utils";
-import physics from "./problems/physics";
-import math from "./problems/math";
+let problems = {};
+export let collections = {
+  "Algebra": {d: ["alg"], p: ["l1", "l2"]},
+  "Exponents and compound interest": {d: ["math"], p: ["e1"]},
+  "Calculus": {d: ["calc"], p: ["c1"]},
+  "Physics": {d: ["physics"], p: ["thermal1"]},
+  "Simultaneous equations": {d: ["alg"], p: ["simult1"]}
+}
+let importCache = [];
 
-let problems = {
-  "l1": {
-    name: "solving simple linear equations",
-    generate() {
-      let a = random.nonZeroInt(-10, 10);
-      let b = random.nonZeroInt(-10, 10);
-      return {
-        q: [a, b],
-        a: b - a
-      }
-    },
-    format({q, a}) {
-      return {
-        question: <span>
-          <Katex>{algebra.formatExpression("x", q[0])}={q[1]}</Katex>
-          <br/>
-          Solve for <K m="x"/>
-        </span>,
-        answer: <Katex>x = {a}</Katex>,
-        explanation: <span>
-          To get only <K m="x"/> on the left side, we can subtract <K m={q[0]}/> from both sides.
-          <br/>
-          This gives us <Katex>{q[1]} - {q[0]}</Katex> on the right-hand-side: <K m={a}/>.
-        </span>
-      }
-    },
-    turnover: 200,
-    documented: false,
-    calculator: false
-  },
-  "l2": {
-    name: "solving simple linear equations with multiplication",
-    generate() {
-      let coefficient = random.sign() * random.int(3, 9);
-      let rhs = random.sign() * random.int(1, 10);
-      return {
-        q: [coefficient, coefficient * rhs],
-        a: rhs
-      }
-    },
-    format({q, a}) {
-      return {
-        question: <span>
-          <Katex>{algebra.formatEquation([[q[0], "x"]], [q[1]])}</Katex>
-          <br/>
-          Solve for <K m="x"/>
-        </span>,
-        answer: <Katex>x = {a}</Katex>
-      }
+export async function getIdList(name) {
+  for (let dependency of collections[name].d) {
+    if (importCache.indexOf(dependency) === -1) {
+      problems = {...problems, ...(await import(`./problems/${dependency}.js`)).default};
+      importCache.push(dependency);
     }
-  },
-  "e1": {
-    name: "calculating exponential growth",
-    generate() {
-      let variant = random.bool();
-      return {
-        q: [random.int(15, 10000), random.bool(), random.int(1, 10) / 2, random.int(3, 20)],
-        name: random.name(),
-        noun: variant ? random.noun() : 0,
-        currency: random.currency(),
-        variant: variant
-      }
-    },
-    format({q, name, noun, currency, variant}) {
-      let multiplier = 1 + (q[1] ? 0.01 : -0.01) * q[2];
-      let answer = q[0] * Math.pow(multiplier, q[3]);
-      return {
-        question: <span>
-          {name} {variant ? "buys" : "deposits"} {currency}<K m={fmt.toNPlaces(q[0], 2)}/> {variant ? "worth of stock" : ""} in {variant ? `${fmt.indArticle(noun)} ${noun} company` : "a bank"}. Every year, their {variant ? "stock price" : "balance"} {q[1] ? "increases" : "decreases"} by <K m={q[2]}/>%. After <K m={q[3]}/> years, how much money is {variant ? "the stock worth" : "in their bank account"}?
-        </span>,
-        answer: <span>{currency}<K m={fmt.toNPlaces(answer, 2)}/></span>,
-        explanation: <span>
-          {name}'s {variant ? "stock price" : "balance"} {q[1] ? "increases" : "decreases"} by <K m={q[2]}/>% per year, so each year its value changes by a factor of <K m={multiplier}/>.
-          <br/>
-          Repeatedly multiplying by <K m={multiplier}/>, <K m={q[3]}/> times, is the same as taking <K m={multiplier}/> to the power of <K m={q[3]}/>, which is <K m={fmt.round(Math.pow(multiplier, q[3]), 3)}/>.
-          <br/>
-          Multiplying this by the initial amount gives us <K m={fmt.round(answer, 3)}/>.
-        </span>
-      }
-    },
-    turnover: 1000,
-    documented: false,
-    calculator: true
-  },
-  "dummy": {
-    name: "dummy",
-    generate() {
-      return {
-        q: 1
-      }
-    },
-    format({q}) {
-      return {
-        question: `${q}`,
-        answer: `${q}`
-      }
-    },
-    turnover: 0,
-    documented: false,
-    calculator: false
-  },
-  "c1": {
-    name: "integration",
-    generate() {
-      return {
-        q: [random.int(1, 9), random.int(2, 10)]
-      }
-    },
-    format({q}) {
-      const [n, d] = algebra.simplifyFraction(q[0], q[1]+1);
-      return {
-        question: <span>
-          Work out the indefinite integral:
-          <br/>
-          <Katex display={true}>\int {q[0]}x^{`{${q[1]}}`}dx</Katex>
-        </span>,
-        answer: <span>
-          <FracN n={n} d={d}/><Katex>x^{`{${q[1]+1}}`}</Katex>
-        </span>
-      }
-    },
-    turnover: 30,
-    documented: false,
-    calculator: false
-  },
-  ...physics,
-  ...math
-};
-let collections = {
-  "Algebra": ["l1", "l2"],
-  "Exponents and compound interest": ["e1"],
-  "Calculus": ["c1"],
-  "Physics": ["thermal1"],
-  "Simultaneous equations": ["simult1"]
+  }
+  return collections[name].p;
 }
 
 let problemHistory = {};
-function honeypotHistory() {
+export function honeypotHistory() {
   let tmp = problemHistory;
   problemHistory = {};
   return () => {
@@ -193,7 +72,7 @@ function trimHistory(id) {
   }
 }
 // Removes all entries from problemHistory that are older than 3 weeks
-function cleanHistory() {
+export function cleanHistory() {
   let now = new Date();
   for (let id in problemHistory) {
     for (let dateString in problemHistory[id]) {
@@ -220,7 +99,7 @@ function stringToDate(string) {
 
 // Returns a new problem object if possible
 // Returns null if unable to create a unique problem not already in problemHistory
-function newProblem(id) {
+export function newProblem(id) {
   let data = newProblemData(id);
   let result = problems[id].format(data);
   // If an id property hasn't been defined, make a unique one
@@ -244,5 +123,3 @@ function newProblemData(id) {
   console.warn(`Unable to create unique problem (id: ${id}, data: ${data})`);
   return data;
 }
-
-export {newProblem, newProblemData, problems, cleanHistory, collections, random, honeypotHistory};

@@ -1,6 +1,7 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import "./SetCard.css";
-import {collections, newProblem, honeypotHistory, random} from "./problems";
+import {getIdList, newProblem, honeypotHistory} from "./problems";
+import {random} from "./utils";
 import OutsideClickDetector from "./OutsideClickDetector";
 
 function DotsMenu(props) {
@@ -44,14 +45,15 @@ function SetItem({problem}) {
   );
 }
 
-function getProblems(route) {
+async function getProblems(route) {
   const [name, seed] = route;
+  let idList = await getIdList(name);
   let problemList = [];
   let restoreHistory = honeypotHistory();
   random.initialize(seed);
   for (let i = 0; i < 5; i++) {
     // Random problem id from the collection topics list
-    let id = collections[name][Math.floor(random.random() * collections[name].length)];
+    let id = idList[Math.floor(random.random() * idList.length)];
     problemList.push(newProblem(id));
   }
   restoreHistory();
@@ -60,7 +62,10 @@ function getProblems(route) {
 
 function SetCard({route, newSet, goto}) {
   const [name, seed] = route;
-  let problemList = getProblems(route);
+  let [problemList, setProblemList] = useState(null);
+  useEffect(() => {
+    getProblems(route).then(list => setProblemList(list));
+  }, [route]);
   return (
     <div className="SetCard">
       <div className="SetCard__header">
@@ -80,11 +85,13 @@ function SetCard({route, newSet, goto}) {
         </div>
       </div>
       <hr />
+      {problemList === null ? 
+      <p>Loading...</p> :
       <ol className="SetCard__list">
         {problemList.map(problem => {
           return <SetItem key={problem.id} problem={problem}/>
         })}
-      </ol>
+      </ol>}
     </div>
   );
 }

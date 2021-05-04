@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from "react";
 import './App.css';
 import {SetCard, Sheet} from "./SetCard";
-import {cleanHistory, collections, random} from "./problems";
+import {cleanHistory, collections} from "./problems";
 import {SetError} from "./error";
+import {random} from "./utils";
 
 const BASE_PATH = "/problems";
 
