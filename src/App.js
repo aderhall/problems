@@ -11,7 +11,7 @@ function Choice({name, onClick}) {
   return (
     <button className="Choice" onClick={onClick}>
       <span>{name}</span>
-      <svg width="24px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
       </svg>
     </button>
@@ -107,13 +107,13 @@ function App() {
           <>
             <nav className="no-print">
               <button className="link-button" onClick={() => window.history.back()}>
-                <svg width="15px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <svg width="15px" height="15px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
                 </svg>
                 Back
               </button>
               <button className="link-button" onClick={() => goto([null])}>
-                <svg width="15px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <svg width="15px" height="15px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
                 </svg>
                 Home
@@ -147,7 +147,7 @@ export default App;
   * √ Remove coefficient of 1 in formatTerm
   * √ Reload button easier to access
   * √ Error boundaries
-  * Lazy loading problems
+  * √ Lazy loading problems
   * Some way to limit problems that have already come up?
   * SVG Diagrams
   * Help page documentation
