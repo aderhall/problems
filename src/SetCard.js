@@ -99,7 +99,10 @@ function SetCard({route, newSet, goto}) {
 function Sheet({route, printPage}) {
   // eslint-disable-next-line no-unused-vars
   const [name, _seed, mode] = route;
-  let problemList = getProblems(route);
+  let [problemList, setProblemList] = useState(null);
+  useLayoutEffect(() => {
+    getProblems(route).then(list => setProblemList(list));
+  }, [route]);
   return (
     <div className="SetCard">
       <div className="SetCard__header">
@@ -107,35 +110,38 @@ function Sheet({route, printPage}) {
         <button className="link-button no-print" onClick={() => printPage()}>Print</button>
       </div>
       <hr />
-      <ol className="SetCard__list">
-        {problemList.map(problem => {
-          let data;
-          switch (mode) {
-            case 1:
-              data = problem.question;
-              break;
-            case 2:
-              data = problem.answer;
-              break;
-            case 3:
-              if (problem.explanation) {
-                data = <>
-                  {problem.answer}
-                  <br/>
-                  {problem.explanation}
-                </>
-              } else {
+      {problemList === null ?
+        <p>Loading problems...</p> :
+        <ol className="SetCard__list">
+          {problemList.map(problem => {
+            let data;
+            switch (mode) {
+              case 1:
+                data = problem.question;
+                break;
+              case 2:
                 data = problem.answer;
-              }
-              break;
-            default:
-              throw new Error(`Unrecognized mode: ${mode}`);
-          }
-          return <li key={problem.id}>
-            <div>{data}</div>
-          </li>
-        })}
-      </ol>
+                break;
+              case 3:
+                if (problem.explanation) {
+                  data = <>
+                    {problem.answer}
+                    <br/>
+                    {problem.explanation}
+                  </>
+                } else {
+                  data = problem.answer;
+                }
+                break;
+              default:
+                throw new Error(`Unrecognized mode: ${mode}`);
+            }
+            return <li key={problem.id}>
+              <div>{data}</div>
+            </li>
+          })}
+        </ol>
+      }
     </div>
   );
 }
