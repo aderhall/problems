@@ -18,7 +18,24 @@
   text-decoration: underline;
 }
 
-.Choice {
+.Folder__button>svg {
+  transform: rotate(0deg);
+  transition: transform 0.3s;
+}
+.Folder__button>svg.open {
+  transform: rotate(-180deg);
+}
+
+.Folder__items {
+  display: none;
+  margin-left: 1em;
+  /*border-left: 2px solid #aaa;*/
+}
+.Folder__items.open {
+  display: block;
+}
+
+.navigator-button {
   padding: 1em 0.5em;
   border: 2px solid transparent;
   background-color: transparent;
@@ -33,14 +50,15 @@
   line-height: 1.5em;
   cursor: pointer;
 }
-.Choice:hover {
+
+.navigator-button:hover {
   background-color: #efefef;
 }
-.Choice:focus {
+.navigator-button:focus {
   outline: 0;
   border: 2px solid #1c5065;
 }
-.Choice>svg {
+.navigator-button>svg {
   flex: 0 0 auto;
 }
 

@@ -46,8 +46,8 @@ function SetItem({problem}) {
 }
 
 async function getProblems(route) {
-  const [name, seed] = route;
-  let idList = await getIdList(name);
+  const [path, seed] = route;
+  let idList = await getIdList(path);
   let problemList = [];
   let restoreHistory = honeypotHistory();
   random.initialize(seed);
@@ -61,7 +61,9 @@ async function getProblems(route) {
 }
 
 function SetCard({route, newSet, goto}) {
-  const [name, seed] = route;
+  const [path, seed] = route;
+  let pathComponents = path.split("/");
+  let name = pathComponents[pathComponents.length - 1];
   let [problemList, setProblemList] = useState(null);
   useLayoutEffect(() => {
     getProblems(route).then(list => setProblemList(list));
@@ -71,16 +73,16 @@ function SetCard({route, newSet, goto}) {
       <div className="SetCard__header">
         <h2>{name}</h2>
         <div className="SetCard__buttons">
-          <button onClick={() => newSet(name)} title="Reload all problems" aria-label="Reload all problems">
+          <button onClick={() => newSet(path)} title="Reload all problems" aria-label="Reload all problems">
             <svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
           </button>
           <DotsMenu items={[
-            ["Export worksheet", () => goto([name, seed, 1])],
-            ["Export answer sheet", () => goto([name, seed, 2])],
-            ["Export answers and explanations", () => goto([name, seed, 3])],
-            ["Reload all problems", () => newSet(name)]
+            ["Export worksheet", () => goto([path, seed, 1])],
+            ["Export answer sheet", () => goto([path, seed, 2])],
+            ["Export answers and explanations", () => goto([path, seed, 3])],
+            ["Reload all problems", () => newSet(path)]
           ]}/>
         </div>
       </div>
@@ -98,7 +100,9 @@ function SetCard({route, newSet, goto}) {
 
 function Sheet({route, printPage}) {
   // eslint-disable-next-line no-unused-vars
-  const [name, _seed, mode] = route;
+  const [path, _seed, mode] = route;
+  let pathComponents = path.split("/");
+  let name = pathComponents[pathComponents.length - 1];
   let [problemList, setProblemList] = useState(null);
   useLayoutEffect(() => {
     getProblems(route).then(list => setProblemList(list));

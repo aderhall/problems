@@ -1,21 +1,34 @@
 let problems = {};
+
 export let collections = {
-  "Algebra": {d: ["alg"], p: ["l1", "l2"]},
-  "Exponents and compound interest": {d: ["math"], p: ["e1"]},
-  "Calculus": {d: ["calc"], p: ["c1"]},
-  "Physics": {d: ["physics"], p: ["thermal1"]},
-  "Simultaneous equations": {d: ["alg"], p: ["simult1"]}
+  "_Arithmetic": {
+    "Exponents and compound interest": {"math": ["e1"]}
+  },
+  "_Algebra": {
+    "Simultaneous equations": {"alg": ["simult1"]},
+    "Simple linear equations": {"alg": ["l1", "l2"]}
+  },
+  "Calculus": {"calc": ["c1"]},
+  "_Physics": {
+    "Thermal physics": {"physics": ["thermal1"]}
+  }
 }
 let importCache = [];
 
-export async function getIdList(name) {
-  for (let dependency of collections[name].d) {
+export async function getIdList(path) {
+  let dependencyObject = collections;
+  for (let component of path.split("/")) {
+    dependencyObject = dependencyObject[component];
+  }
+  let idList = [];
+  await Promise.all(Object.entries(dependencyObject).map(async ([dependency, ids]) => {
+    idList.push(...ids);
     if (importCache.indexOf(dependency) === -1) {
-      problems = {...problems, ...(await import(`./problems/${dependency}.js`)).default};
+      problems = {...problems, ...(await import(`./problems/${dependency}.js`)).default}
       importCache.push(dependency);
     }
-  }
-  return collections[name].p;
+  }));
+  return idList;
 }
 
 let problemHistory = {};

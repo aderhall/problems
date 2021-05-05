@@ -9,7 +9,7 @@ const BASE_PATH = "/problems";
 
 function Choice({name, onClick}) {
   return (
-    <button className="Choice" onClick={onClick}>
+    <button className="Choice navigator-button" onClick={onClick}>
       <span>{name}</span>
       <svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -18,11 +18,33 @@ function Choice({name, onClick}) {
   );
 }
 
-function Chooser({newSet}) {
+function Folder({name, contents, newSet, path}) {
+  const [open, setOpen] = useState(false);
+  return <>
+    <button className="Folder__button navigator-button" onClick={() => setOpen(!open)}>
+      <span>{name}</span>
+      <svg className={open ? "open" : ""} width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+    <div className={"Folder__items" + (open ? " open" : "")}>
+      <Chooser items={contents} newSet={newSet} path={path}/>
+    </div>
+  </>;
+}
+
+function Chooser({items, newSet, path}) {
+  if (path === undefined) {
+    path = "";
+  } else {
+    path += "/";
+  }
   return (
     <div className="Chooser">
-      {Object.entries(collections).map(([name, _topics], index) => (
-        <Choice name={name} key={index} onClick={() => newSet(name)} />
+      {Object.entries(items).map(([name, contents], index) => (
+        name[0] === "_" ?
+        <Folder name={name.slice(1)} contents={contents} key={index} newSet={newSet} path={path + name}/> :
+        <Choice name={name} contents={contents} key={index} onClick={() => newSet(path + name)} />
       ))}
     </div>
   );
@@ -45,8 +67,8 @@ function getRouteFromUrl() {
   }
   let fragments = path[1].split("/");
   try {
-    let name = decodeURIComponent(fragments[0]);
-    let [seed, mode] = decodeData(fragments[1]);
+    let name = fragments.slice(0, fragments.length-1).map(decodeURIComponent).join("/");
+    let [seed, mode] = decodeData(fragments[fragments.length - 1]);
     return [name, seed, mode];
   } catch {
     console.error("Couldn't resolve url data fragment, redirecting to home.");
@@ -55,10 +77,10 @@ function getRouteFromUrl() {
   }
 }
 function navigateToRoute(route) {
-  const [name, seed, mode] = route;
-  if (name !== null) {
-    window.history.pushState(route, "", `${BASE_PATH}#!${name}/${encodeData(seed, mode)}`);
-    document.title = `${name}${mode === 0 ? "" : ` (${mode === 1 ? "worksheet" : "answers"})`} | Adrian's endless source of problems`;
+  const [path, seed, mode] = route;
+  if (path !== null) {
+    window.history.pushState(route, "", `${BASE_PATH}#!${path}/${encodeData(seed, mode)}`);
+    document.title = `${path}${mode === 0 ? "" : ` (${mode === 1 ? "worksheet" : "answers"})`} | Adrian's endless source of problems`;
   } else {
     window.history.pushState(null, "", `${BASE_PATH}`);
     document.title = "Adrian's endless source of problems";
@@ -81,9 +103,9 @@ function App() {
     navigateToRoute(route);
     setRoute(route);
   }
-  const newSet = name => {
+  const newSet = path => {
     let seed = random.newRandomSeed();
-    goto([name, seed, 0]);
+    goto([path, seed, 0]);
   }
   
   const [printMode, setPrintMode] = useState(false);
@@ -103,7 +125,7 @@ function App() {
       </header>
       <main>
         {route[0] === null ? 
-          <Chooser newSet={newSet} /> : 
+          <Chooser newSet={newSet} items={collections}/> : 
           <>
             <nav className="no-print">
               <button className="link-button" onClick={() => window.history.back()}>
@@ -148,6 +170,8 @@ export default App;
   * √ Reload button easier to access
   * √ Error boundaries
   * √ Lazy loading problems
+  * √ Folders and subfolders
+  * Customize number of problems in a worksheet, store this in URL
   * Some way to limit problems that have already come up?
   * SVG Diagrams
   * Help page documentation
