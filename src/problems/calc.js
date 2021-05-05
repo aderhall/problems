@@ -16,7 +16,7 @@ let problems = {
           <Katex display={true}>\int {q[0]}x^{`{${q[1]}}`}dx</Katex>
         </span>,
         answer: <span>
-          <FracN n={n} d={d}/><Katex>x^{`{${q[1]+1}}`}</Katex>
+          <FracN n={n} d={d} coef={true}/><Katex>x^{`{${q[1]+1}}`}</Katex>
         </span>
       }
     },
