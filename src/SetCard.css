@@ -10,7 +10,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 2em;
 }
 .SetCard h2 {
   text-transform: capitalize;
@@ -19,6 +18,7 @@
   font-size: 20px;
   color: #666;
   margin: 0;
+  margin-right: 1em;
 }
 
 .SetCard hr {
