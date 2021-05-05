@@ -1,14 +1,18 @@
 let problems = {};
 
 export let collections = {
-  "_Arithmetic": {
-    "Exponents and compound interest": {"math": ["e1"]}
+  "_Math": {
+    "_Arithmetic": {
+      "Exponents and compound interest": {"math": ["e1"]}
+    },
+    "_Algebra": {
+      "Simultaneous equations": {"alg": ["simult1"]},
+      "Simple linear equations": {"alg": ["l1", "l2"]}
+    },
+    "_Calculus": {
+      "Simple integration": {"calc": ["c1"]}
+    }
   },
-  "_Algebra": {
-    "Simultaneous equations": {"alg": ["simult1"]},
-    "Simple linear equations": {"alg": ["l1", "l2"]}
-  },
-  "Calculus": {"calc": ["c1"]},
   "_Physics": {
     "Thermal physics": {"physics": ["thermal1"]}
   }
