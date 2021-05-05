@@ -22,10 +22,10 @@ function Folder({name, contents, newSet, path}) {
   const [open, setOpen] = useState(false);
   return <>
     <button className="Folder__button navigator-button" onClick={() => setOpen(!open)}>
-      <span>{name}</span>
       <svg className={open ? "open" : ""} width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
       </svg>
+      <span>{name}</span>
     </button>
     <div className={"Folder__items" + (open ? " open" : "")}>
       <Chooser items={contents} newSet={newSet} path={path}/>
