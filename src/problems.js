@@ -7,7 +7,8 @@ export let collections = {
     },
     "_Algebra": {
       "Simultaneous equations": {"alg": ["simult1"]},
-      "Simple linear equations": {"alg": ["l1", "l2"]}
+      "Simple linear equations": {"alg": ["l1", "l2"]},
+      "Factoring quadratics": {"alg": ["factor"]}
     },
     "_Calculus": {
       "Simple integration": {"calc": ["c1"]}

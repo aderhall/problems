@@ -34,7 +34,6 @@ let problems = {
     }
   },
   "l1": {
-    name: "solving simple linear equations",
     generate() {
       let a = random.nonZeroInt(-10, 10);
       let b = random.nonZeroInt(-10, 10);
@@ -63,7 +62,6 @@ let problems = {
     calculator: false
   },
   "l2": {
-    name: "solving simple linear equations with multiplication",
     generate() {
       let coefficient = random.sign() * random.int(3, 9);
       let rhs = random.sign() * random.int(1, 10);
@@ -80,6 +78,43 @@ let problems = {
           Solve for <K m="x"/>
         </span>,
         answer: <Katex>x = {a}</Katex>
+      }
+    }
+  },
+  "factor": {
+    generate() {
+      let inner1 = random.bool(0.8) ? random.int(2, 13) : 1;
+      let inner2 = (inner1 !== 1 && random.bool(0.4)) ? random.int(2, 3) : 1;
+      let max = parseInt(11 / inner1 / inner2);
+      let outer = random.bool(0.2) ? 1 : random.int(1, max < 1 ? 1 : max);
+      let add1 = random.nonZeroInt(-13, 13);
+      let add2 = random.sign() * random.int(1, parseInt(30 / Math.abs(add1)));
+      
+      let gcf1 = algebra.gcf(inner1, add1);
+      inner1 /= gcf1;
+      add1 /= gcf1;
+      outer *= gcf1;
+      let gcf2 = algebra.gcf(inner2, add2);
+      inner2 /= gcf2;
+      add2 /= gcf2;
+      outer *= gcf2;
+      
+      return {
+        q: {
+          a: inner1 * inner2 * outer,
+          b: (inner1 * add2 + inner2 * add1) * outer,
+          c: add1 * add2 * outer
+        },
+        ans: [outer, inner1, add1, inner2, add2]
+      }
+    },
+    format({q: {a, b, c}, ans}) {
+      return {
+        question: <p>
+          Factor the following quadratic expression:
+          <Katex display={true}>{algebra.formatExpression([a, "x^2"], [b, "x"], c)}</Katex>
+        </p>,
+        answer: <Katex>{algebra.formatCoef(ans[0])}({algebra.formatExpression([ans[1], "x"], ans[2])})({algebra.formatExpression([ans[3], "x"], ans[4])})</Katex>
       }
     }
   }
