@@ -7,6 +7,11 @@ import {random} from "./utils";
 
 const BASE_PATH = "/problems";
 
+export function getNameFromPath(path) {
+  let pathComponents = path.split("/");
+  return pathComponents[pathComponents.length - 1];
+}
+
 function Choice({name, onClick}) {
   return (
     <button className="Choice navigator-button" onClick={onClick}>
@@ -61,15 +66,16 @@ function decodeData(str) {
 // home: `https://aderhall.github.io/${BASE_PATH}
 // specific questions: `https://aderhall.github.io/${BASE_PATH}#!${name}/${data}`
 function getRouteFromUrl() {
-  let path = window.location.href.split("#!").filter(x => x !== "");
-  if (path.length === 1) {
+  let urlComponents = window.location.href.split("#!").filter(x => x !== "");
+  if (urlComponents.length === 1) {
     return [null];
   }
-  let fragments = path[1].split("/");
+  let fragments = urlComponents[1].split("/");
   try {
-    let name = fragments.slice(0, fragments.length-1).map(decodeURIComponent).join("/");
+    let path = fragments.slice(0, fragments.length-1).map(decodeURIComponent).join("/");
     let [seed, mode] = decodeData(fragments[fragments.length - 1]);
-    return [name, seed, mode];
+    updateDocTitle(path, mode);
+    return [path, seed, mode];
   } catch {
     console.error("Couldn't resolve url data fragment, redirecting to home.");
     navigateToRoute([null]);
@@ -80,11 +86,14 @@ function navigateToRoute(route) {
   const [path, seed, mode] = route;
   if (path !== null) {
     window.history.pushState(route, "", `${BASE_PATH}#!${path}/${encodeData(seed, mode)}`);
-    document.title = `${path}${mode === 0 ? "" : ` (${mode === 1 ? "worksheet" : "answers"})`} | Adrian's endless source of problems`;
+    updateDocTitle(path, mode);
   } else {
     window.history.pushState(null, "", `${BASE_PATH}`);
     document.title = "Adrian's endless source of problems";
   }
+}
+function updateDocTitle(path, mode) {
+  document.title = `${getNameFromPath(path)}${mode === 0 ? "" : ` (${mode === 1 ? "worksheet" : "answers"})`} | Adrian's endless source of problems`;
 }
 
 function App() {
@@ -171,6 +180,7 @@ export default App;
   * √ Error boundaries
   * √ Lazy loading problems
   * √ Folders and subfolders
+  * Make noprint work more universally
   * Customize number of problems in a worksheet, store this in URL
   * Some way to limit problems that have already come up?
   * SVG Diagrams
