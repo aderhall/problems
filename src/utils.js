@@ -23,10 +23,14 @@ function Katex({children, display}) {
 function K({m}) {
   return <Katex>{m}</Katex>;
 }
-function FracN({n, d}) {
+function FracN({n, d, coef}) {
   [n, d] = algebra.simplifyFraction(n, d);
   if (d === 1) {
-    return <K m={n} />;
+    if (coef) {
+      return <K m={algebra.formatCoef(n)} />
+    } else {
+      return <K m={n} />;
+    }
   } else {
     return <Katex>\frac{`{${n}}{${d}}`}</Katex>
   }
@@ -114,8 +118,11 @@ let random = {
     }
     return ints;
   },
-  bool() {
-    return this.random() >= 0.5;
+  bool(trueProbability) {
+    if (trueProbability === undefined) {
+      trueProbability = 0.5;
+    }
+    return this.random() < trueProbability;
   },
   sign() {
     return this.bool() ? 1 : -1;
@@ -229,6 +236,10 @@ let algebra = {
       },
       factors(num) {
         let factors = []
+        if (num < 0) {
+          num = -num;
+          factors.push(-1);
+        }
         if (num < 2) {
           return factors;
         }
@@ -262,6 +273,16 @@ let algebra = {
     let gcf = this.gcf(n, d);
     return [n / gcf, d / gcf];
   },
+  formatCoef(coef) {
+    if (coef === 1) {
+      coef = "";
+    } else if (coef === -1) {
+      coef = "-";
+    } else {
+      coef = coef.toString();
+    }
+    return coef;
+  },
   formatTerm(factors) {
     // [-5, 3, "x^{11}", -1, "y", -2] -> "-30x^{11}y"
     let coefficient = 1;
@@ -274,11 +295,7 @@ let algebra = {
       }
     }
     if (acc) {
-      if (coefficient === 1) {
-        coefficient = "";
-      } else if (coefficient === -1) {
-        coefficient = "-";
-      }
+      coefficient = this.formatCoef(coefficient);
     }
     return coefficient + acc;
   },
@@ -290,7 +307,7 @@ let algebra = {
         return term.toString();
       }
       return term;
-    }).reduce((acc, term, index) => acc + (term[0] === "-" || index === 0 ? "" : "+") + term, "");
+    }).reduce((acc, term, index) => acc + (term[0] === "0" ? "" : (term[0] === "-" || acc === "" ? "" : "+") + term), "");
   },
   formatEquation(lhs, rhs) {
     return this.formatExpression(...lhs) + "=" + this.formatExpression(...rhs);
