@@ -222,6 +222,15 @@ let algebra = {
         }
         return value;
       },
+      getRange(min, max) {
+        let values = [];
+        let idx = min;
+        while (idx < max) {
+          values.push(this.get(idx));
+          idx++;
+        }
+        return values;
+      },
       indexOf(num) {
         while (true) {
           if (num > primes[primes.length - 1]) {
