@@ -83,21 +83,33 @@ let problems = {
   },
   "factor": {
     generate() {
-      let inner1 = random.bool(0.8) ? random.int(2, 13) : 1;
-      let inner2 = (inner1 !== 1 && random.bool(0.4)) ? random.int(2, 3) : 1;
-      let max = parseInt(11 / inner1 / inner2);
-      let outer = random.bool(0.2) ? 1 : random.int(1, max < 1 ? 1 : max);
-      let add1 = random.nonZeroInt(-13, 13);
-      let add2 = random.sign() * random.int(1, parseInt(30 / Math.abs(add1)));
+      let inner1 = random.bool(0.5) ? random.choice(algebra.primes.getRange(0, 3)) : 1;
+      let inner2 = (inner1 !== 1 && random.bool(0.5)) ? random.choice(algebra.primes.getRange(0, 2)) : 1;
+      
+      let okFactors = [2, 2, 2, 3, 3, 5, 5, 7, 11];
+      let add1 = 1;
+      let newFactor = random.choice(okFactors);
+      while (inner1 * add1 * newFactor < 15) {
+        okFactors.splice(okFactors.indexOf(newFactor), 1);
+        add1 *= newFactor;
+        newFactor = random.choice(okFactors);
+      }
+      let add2 = 1;
+      newFactor = random.choice(okFactors);
+      while (inner1 * inner2 * add1 * add2 * newFactor <= 100) {
+        okFactors.splice(okFactors.indexOf(newFactor), 1);
+        add2 *= newFactor;
+        newFactor = random.choice(okFactors);
+      }
       
       let gcf1 = algebra.gcf(inner1, add1);
       inner1 /= gcf1;
       add1 /= gcf1;
-      outer *= gcf1;
       let gcf2 = algebra.gcf(inner2, add2);
       inner2 /= gcf2;
       add2 /= gcf2;
-      outer *= gcf2;
+      
+      let outer = random.bool(0.2) ? random.choice([2, 3, 5, 10]) : 1;
       
       return {
         q: {
@@ -111,9 +123,9 @@ let problems = {
     format({q: {a, b, c}, ans}) {
       return {
         question: <p>
-          Factor the following quadratic expression:
-          <Katex display={true}>{algebra.formatExpression([a, "x^2"], [b, "x"], c)}</Katex>
-        </p>,
+        Factor the following quadratic expression:
+        <Katex display>{algebra.formatExpression([a, "x^2"], [b, "x"], c)}</Katex>
+      </p>,
         answer: <Katex>{algebra.formatCoef(ans[0])}({algebra.formatExpression([ans[1], "x"], ans[2])})({algebra.formatExpression([ans[3], "x"], ans[4])})</Katex>
       }
     }
