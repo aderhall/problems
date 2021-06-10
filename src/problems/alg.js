@@ -101,6 +101,8 @@ let problems = {
         add2 *= newFactor;
         newFactor = random.choice(okFactors);
       }
+      add1 *= random.sign();
+      add2 *= random.sign();
       
       let gcf1 = algebra.gcf(inner1, add1);
       inner1 /= gcf1;
@@ -109,7 +111,7 @@ let problems = {
       inner2 /= gcf2;
       add2 /= gcf2;
       
-      let outer = random.bool(0.2) ? random.choice([2, 3, 5, 10]) : 1;
+      let outer = (random.bool(0.2) ? random.choice([2, 3, 5, 10]) * random.sign() : 1);
       
       return {
         q: {
